@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+
+<title></title>
+
+<meta name="description" content="">
+
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="/reveal.js/css/reveal.css">   <link rel="stylesheet" href="/reveal.js/css/theme/simple.css" id="theme">
+
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; }
+code > span.dt { color: #800000; }
+code > span.dv { color: #0000ff; }
+code > span.bn { color: #0000ff; }
+code > span.fl { color: #800080; }
+code > span.ch { color: #ff00ff; }
+code > span.st { color: #dd0000; }
+code > span.co { color: #808080; font-style: italic; }
+code > span.al { color: #00ff00; font-weight: bold; }
+code > span.fu { color: #000080; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+
+<style>
+/* .reveal .slides { font-size: 1.2em;}
+.reveal .slides .pre {font-size: larger;}
+*/
+em { color: #550; font-size: 105%; font-style: normal; }
+strong { color: #800; font-size: 110%; font-weight: normal; }
+.reveal h1 { font-size: 3em; }
+pre code { font-size: 1.5em !important; line-height: 1.5em !important; background-color: white !important; color: black !important; }
+img {border: none !important;}
+</style>
+
+<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+<script>
+  document.write( '<link rel="stylesheet" href="/reveal.js/css/print/' +
+    ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) +
+    '.css" type="text/css" media="print">' );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class="slides">
+
+<section>
+<h1>Haskellでの合成可能なオブジェクトの構成とその応用</h1>
+
+<p>木下郁章</p>
+<p>山本和彦(IIJ-II)</p>
+
+<p>
+<h4>2015/03/05</h4>
+</p>
+</section>
+
+
+<section id="背景" class="level2">
+<h2>背景</h2>
+<ul>
+<li>Haskellでゲームプログラミングをしたい</li>
+<li>ゲームプログラミングでは、内部構造の異なるデータを操作によって共通の型によって扱いたい場面がある</li>
+</ul>
+<p class="fragment" data-fragment-index="0">
+<img src="states.png" />
+</p>
+<p class="fragment" data-fragment-index="1">
+<strong>Haskellではそのような共通化が苦手</strong>
+</p>
+</section>
+<section id="共通化するには" class="level2">
+<h2>共通化するには</h2>
+<figure>
+<img src="data-abstraction.png" />
+</figure>
+<aside class="notes">
+<p>一方、OOPでは、同じ操作のできるオブジェクトは同じものとして同じコンテナに格納したりできる</p>
+</aside>
+</section>
+<section id="研究の目的" class="level2">
+<h2>研究の目的</h2>
+<ul>
+<li>クラスベースオブジェクト指向言語なら、
+<ul>
+<li>同じ操作を持つオブジェクトは同じ型で扱える</li>
+<li>サブクラスの定義によってデータを増やせる</li>
+</ul></li>
+<li>Haskellで、操作によって共通化でき、データが拡張できる構造を作る</li>
+</ul>
+<aside class="notes">
+操作によって共通化する抽象化手法を作るのが目的であり、オブジェクト指向の模倣は目的とはしない。
+</aside>
+</section>
+<section id="アイデア" class="level2">
+<h2>アイデア</h2>
+<ul>
+<li>操作の型によってのみ決まるデータ型を作る
+<ul>
+<li>同じ操作を持つならば同じ型になる</li>
+<li>値の定義によってデータを増やせる</li>
+</ul></li>
+<li>操作を「メッセージ」、データを「オブジェクト」とする</li>
+</ul>
+<aside class="notes">
+操作によってのみ決まるので、内部状態は型に現れない
+</aside>
+<!--
+我々の表現
+--------
+![](slide/representation.png)
+
+<aside class="notes">
+メッセージとオブジェクトから、対応するメソッドを呼び出したい。
+オブジェクトにメソッドのテーブルを対応させるものが多いが、我々はメッセージからアクションへの変換そのものをオブジェクトと捉えた。
+オブジェクトがメッセージからアクションへの変換なので、オブジェクトとメッセージがあれば自明にアクションが得られる
+</aside>
+-->
+</section>
+<section id="オブジェクトのデータ型の定義" class="level2">
+<h2>オブジェクトのデータ型の定義</h2>
+<figure>
+<img src="Object-def.png" />
+</figure>
+</section>
+<section id="メッセージの送信" class="level2">
+<h2>メッセージの送信</h2>
+<figure>
+<img src="runObject.png" />
+</figure>
+</section>
+<section id="例-インターフェイス" class="level2">
+<h2>例: インターフェイス</h2>
+<figure>
+<img src="interface.png" />
+</figure>
+</section>
+<section id="例-オブジェクト" class="level2">
+<h2>例: オブジェクト</h2>
+<p>Incrementを受け取ると内部状態を1増やし、Printで出力</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">counter ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Object</span> <span class="dt">Counter</span> <span class="dt">IO</span>
+counter n <span class="fu">=</span> <span class="dt">Object</span> <span class="fu">$</span> λr <span class="ot">-&gt;</span> <span class="kw">case</span> r <span class="kw">of</span>
+    <span class="dt">Print</span> <span class="ot">-&gt;</span> print n <span class="fu">&gt;&gt;</span> return ((), counter n)
+    <span class="dt">Increment</span> <span class="ot">-&gt;</span> return (n, counter (n <span class="fu">+</span> <span class="dv">1</span>))</code></pre>
+<aside class="notes">
+handleはメッセージをアクションに対応させる。 メッセージを受け取ると、対応する処理を行い、結果と次の状態を持ったオブジェクトを返す。
+</aside>
+</section>
+<section id="インスタンス" class="level2">
+<h2>インスタンス</h2>
+<ul>
+<li>提案する手法は、一般的な実装と同様、参照を用いてインスタンスを表せる</li>
+<li>以下のような、メッセージ送信演算子が考えられる</li>
+<li><code>(.-) :: MVar (Object f IO) -&gt; f a -&gt; IO a</code></li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">i <span class="fu">.-</span> f <span class="fu">=</span> <span class="kw">do</span>
+    obj <span class="ot">&lt;-</span> takeMVar i
+    (a, obj&#39;) <span class="ot">&lt;-</span> runObject obj f
+    putMVar i obj&#39;
+    return a</code></pre>
+<aside class="notes">
+一般的なドット演算子を模している。 MVarはHaskellにおける参照の表現の一つで、 参照からオブジェクトを取り出す、 オブジェクトにメッセージを送る、 得られた新しいオブジェクトを書き込む、 という処理を行う。
+</aside>
+</section>
+<section id="例" class="level2">
+<h2>例</h2>
+<section>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> i <span class="ot">&lt;-</span> newMVar (counter <span class="dv">0</span>)
+<span class="fu">&gt;</span> i <span class="fu">.-</span> <span class="dt">Print</span>
+<span class="dv">0</span>
+<span class="fu">&gt;</span> i <span class="fu">.-</span> <span class="dt">Increment</span>
+<span class="fu">&gt;</span> i <span class="fu">.-</span> <span class="dt">Increment</span>
+<span class="fu">&gt;</span> i <span class="fu">.-</span> <span class="dt">Print</span>
+<span class="dv">2</span></code></pre>
+<aside class="notes">
+newMVarがnew相当になる。
+</aside>
+</section>
+<section>
+<ul>
+<li>一つのオブジェクトに複数のメッセージを送る、メッセージカスケードを表したい</li>
+<li>メソッド呼び出しがモナドの準同型写像としての性質を持てばよい</li>
+<li><code>i .- return a = return a</code></li>
+<li><code>(i .- m) &gt;&gt;= (i .-) . k = i .- (m &gt;&gt;= k)</code></li>
+</ul>
+</section>
+<section>
+<ul>
+<li>Operationalモナドを用いると、このような性質をもつオブジェクトが作れる(本文p7参照)</li>
+<li><code>Object t m -&gt; Object (Program t) m</code></li>
+</ul>
+</section>
+</section>
+<section id="合成の導入" class="level2">
+<h2>合成の導入</h2>
+<ul>
+<li>メッセージもアクションの一種である</li>
+<li>オブジェクトはアクションをアクションに変換する</li>
+<li><strong>合成できるのでは？</strong></li>
+</ul>
+</section>
+<section id="提案手法でできること" class="level2">
+<h2>提案手法でできること</h2>
+<ul>
+<li>縦の合成: オブジェクトの変換の合成</li>
+<li>横の合成: オブジェクトを結合し、両方のメッセージを受け取るオブジェクトを作る</li>
+<li>時の合成: オブジェクトの死と、その跡継ぎ</li>
+</ul>
+<aside class="notes">
+横の合成と時の合成についてはここでは述べない(詳しくは論文を)
+</aside>
+</section>
+<section id="縦の合成" class="level2">
+<h2>縦の合成</h2>
+<figure>
+<img src="composition.png" />
+</figure>
+<aside class="notes">
+Bが隠れるということはカプセル化も含む
+</aside>
+</section>
+<section id="定命のオブジェクト" class="level2">
+<h2>定命のオブジェクト</h2>
+<ul>
+<li>死ぬべき運命にある(mortal)オブジェクトを表したい</li>
+<li>ゲームの敵キャラクターは、死ぬと消滅する <img src="mortal-example.jpg" alt="mortal-example.jpg" /></li>
+</ul>
+</section>
+<section id="死亡判定メソッドisdead" class="level2">
+<h2>死亡判定メソッドisDead()</h2>
+<p class="fragment" data-fragment-index="0">
+真を返したら、そのオブジェクトへの参照を全て削除
+</p>
+<p class="fragment" data-fragment-index="1">
+<img src="dead-method-problem.png" />
+</p>
+<p class="fragment" data-fragment-index="2">
+<strong>オブジェクトは実際には死ねず、世界との絶縁で近似しているだけ</strong>
+</p>
+<aside class="notes">
+広く使われている手法には大きな二つの問題がある
+</aside>
+</section>
+<section id="提案する手法" class="level2">
+<h2>提案する手法</h2>
+<figure>
+<img src="dead-or-alive.png" />
+</figure>
+<aside class="notes">
+Maybeを返すようなオブジェクトを使う。 メッセージを受け取ったとき、このオブジェクトは二種類の動作をしうる。 一つは、メソッド呼び出しに成功し、結果と次のオブジェクトが生成される場合。 もう一つは、オブジェクトが死亡し、最終結果のみを残す場合。
+</aside>
+</section>
+<section id="評価" class="level2">
+<h2>評価</h2>
+<figure>
+<img src="data-abstraction.png" />
+</figure>
+</section>
+<section id="まとめ" class="level2">
+<h2>まとめ</h2>
+<ul>
+<li>Haskellでは状態の扱いは苦手と考えられがち</li>
+<li>しかし、オブジェクトを実現することで問題を解決できる</li>
+<li>合成可能である</li>
+<li>定命のオブジェクトも表せる</li>
+<li>http://hackage.haskell.org/package/objective</li>
+</ul>
+</section>
+<section id="any-questions" class="level2">
+<h2>Any questions?</h2>
+<section>
+<ul>
+<li></li>
+</ul>
+</section>
+<section>
+<ul>
+<li>多相ヴァリアントとの違い</li>
+</ul>
+</section>
+<section>
+<ul>
+<li>並列合成</li>
+</ul>
+</section>
+</section>
+</div>
+
+<script src="/reveal.js/lib/js/head.min.js"></script>
+<script src="/reveal.js/js/reveal.js"></script>
+
+<script>
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: false,
+
+  // available themes are in /css/theme
+      theme: Reveal.getQueryHash().theme || 'simple',
+
+  // default/cube/page/concave/zoom/linear/fade/none
+      transition: Reveal.getQueryHash().transition || 'linear',
+
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+    { src: '/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    { src: '/reveal.js/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: '/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+  /*  { src: '/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }, */
+    { src: '/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+    { src: '/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+  ]
+  });
+
+</script>
+
+</body>
+</html>
