@@ -2,6 +2,13 @@
 % @fumieval
 % 2015/3/20
 
+自己紹介
+-----------
+* @fumieval, Fumiaki Kinoshita
+* マイブーム: 俳句
+
+![](Icon.png)
+
 Haskell流オブジェクト指向とは
 -----------
 * 作用(IOやオレオレモナドなど)の圏における射である「オブジェクト」に基づいたパラダイム
@@ -89,7 +96,7 @@ data Action x where
 
 http://hackage.haskell.org/package/objective
 
-![](E:/GitHub/fumieval.github.io/papers/ja/2015-Haskell-objects/Object-def.png)
+![](../papers/ja/2015-Haskell-objects/Object-def.png)
 
 オブジェクト(1)
 -----------
