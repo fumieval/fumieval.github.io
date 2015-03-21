@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+
+<title>Haskellerのための実用オブジェクト指向入門</title>
+
+<meta name="description" content="Haskellerのための実用オブジェクト指向入門">
+
+  <meta name="author" content="<span class="citation" data-cites="fumieval">@fumieval</span>" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="/css/reveal.css">   <link rel="stylesheet" href="/css/theme/beige.css" id="theme">
+
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; }
+code > span.dt { color: #800000; }
+code > span.dv { color: #0000ff; }
+code > span.bn { color: #0000ff; }
+code > span.fl { color: #800080; }
+code > span.ch { color: #ff00ff; }
+code > span.st { color: #dd0000; }
+code > span.co { color: #808080; font-style: italic; }
+code > span.al { color: #00ff00; font-weight: bold; }
+code > span.fu { color: #000080; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+
+<style>
+/* .reveal .slides { font-size: 1.2em;}
+.reveal .slides .pre {font-size: larger;}
+*/
+em { color: #550; font-size: 105%; font-style: normal; }
+strong { color: #800; font-size: 110%; font-weight: normal; }
+.reveal h1 { font-size: 3em; }
+pre code { font-size: 1.5em !important; line-height: 1.5em !important; background-color: white !important; color: black !important; }
+img {border: none !important;}
+</style>
+
+<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+<script>
+  document.write( '<link rel="stylesheet" href="/css/print/' +
+    ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) +
+    '.css" type="text/css" media="print">' );
+</script>
+
+<!--[if lt IE 9]>
+<script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class="slides">
+
+<section>
+<h1>Haskellerのための実用オブジェクト指向入門</h1>
+<h3><span class="citation" data-cites="fumieval">@fumieval</span></h3>
+<p>
+<h4>2015/3/20</h4>
+</p>
+</section>
+
+<section id="haskell流オブジェクト指向とは" class="level2">
+<h2>Haskell流オブジェクト指向とは</h2>
+<ul>
+<li>作用(IOやオレオレモナドなど)の圏における射である「オブジェクト」に基づいたパラダイム</li>
+<li>同じ作用間の射である自然変換と違い、内部状態を隠蔽できる</li>
+<li>ゲームのキャラクターの管理などに便利</li>
+</ul>
+</section>
+<section id="オブジェクトを作るには" class="level2">
+<h2>オブジェクトを作るには</h2>
+<ol type="1">
+<li>内部状態を定義する</li>
+<li>命令の集まりを定義する</li>
+<li>命令を状態の操作にする関数を組み合わせる</li>
+<li>楽しい！✌('ω'✌) 三　✌('ω')✌　三　(✌'ω')✌</li>
+</ol>
+</section>
+<section id="ゴブリンオブジェクトを実装したい-状態" class="level2">
+<h2>ゴブリンオブジェクトを実装したい: 状態</h2>
+<ul>
+<li><strong>内部状態は位置、速度、HP</strong></li>
+<li>操作として描画、攻撃、ジャンプ、移動がある</li>
+</ul>
+</section>
+<section id="状態を書く0" class="level2">
+<h2>状態を書く(0)</h2>
+<p>extensibleライブラリを使う</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Extensible</span>
+
+decFields [d<span class="fu">|</span>
+    <span class="kw">type</span> <span class="dt">Position</span> <span class="fu">=</span> <span class="dt">V2</span> <span class="dt">Float</span>
+    <span class="kw">type</span> <span class="dt">Velocity</span> <span class="fu">=</span> <span class="dt">V2</span> <span class="dt">Float</span>
+    <span class="kw">type</span> <span class="dt">HitPoint</span> <span class="fu">=</span> <span class="dt">Int</span>
+    <span class="fu">|</span>]</code></pre>
+</section>
+<section id="状態を書く1" class="level2">
+<h2>状態を書く(1)</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">initialGoblin ::</span> <span class="dt">AllOf</span> [<span class="dt">Position</span>, <span class="dt">Velocity</span>, <span class="dt">Direction</span>]
+initialGoblin <span class="fu">=</span> <span class="dt">Position</span> (<span class="dt">V2</span> <span class="dv">0</span> <span class="dv">0</span>)
+    <span class="fu">&lt;%</span> <span class="dt">Velocity</span> (<span class="dt">V2</span> <span class="dv">0</span> <span class="dv">0</span>)
+    <span class="fu">&lt;%</span> <span class="dt">HP</span>
+    <span class="fu">&lt;%</span> <span class="dt">Nil</span></code></pre>
+</section>
+<section id="状態を書く2" class="level2">
+<h2>状態を書く(2)</h2>
+<p>Lensのアクセサが定義される</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">position ::</span> (<span class="dt">Position</span> ∈ xs) <span class="ot">=&gt;</span> <span class="dt">Lens&#39;</span> (<span class="dt">AllOf</span> xs) (<span class="dt">V2</span> <span class="dt">Float</span>)
+<span class="ot">velocity ::</span> (<span class="dt">Velocity</span> ∈ xs) <span class="ot">=&gt;</span> <span class="dt">Lens&#39;</span> (<span class="dt">AllOf</span> xs) (<span class="dt">V2</span> <span class="dt">Float</span>)
+…</code></pre>
+</section>
+<section id="状態を書く3" class="level2">
+<h2>状態を書く(3)</h2>
+<p>Lensを通して値を操作する</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">use ::</span> <span class="dt">MonadState</span> s m <span class="ot">=&gt;</span> <span class="dt">Lens&#39;</span> s a <span class="ot">-&gt;</span> m a
+<span class="ot">(+=) ::</span> (<span class="dt">MonadState</span> s m, <span class="dt">Num</span> a) <span class="ot">=&gt;</span> <span class="dt">Lens&#39;</span> s a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> m ()</code></pre>
+</section>
+<section id="ゴブリンオブジェクトを実装したい操作" class="level2">
+<h2>ゴブリンオブジェクトを実装したい(操作)</h2>
+<ul>
+<li>内部状態は位置、速度、向き、HP</li>
+<li><strong>操作として描画、攻撃、ジャンプ、移動がある</strong></li>
+</ul>
+</section>
+<section id="インターフェイス" class="level2">
+<h2>インターフェイス</h2>
+<p>GADTで操作の型を並べる</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Action</span> x <span class="kw">where</span>
+    <span class="dt">Attack</span><span class="ot"> ::</span> <span class="dt">Action</span> <span class="dt">Attack</span>
+    <span class="dt">Render</span><span class="ot"> ::</span> <span class="dt">Action</span> <span class="dt">Picture</span>
+    <span class="dt">Jump</span><span class="ot"> ::</span> <span class="dt">Action</span> ()
+    <span class="dt">Move</span><span class="ot"> ::</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Action</span> <span class="dt">Bool</span></code></pre>
+</section>
+<section id="オブジェクト0" class="level2">
+<h2>オブジェクト(0)</h2>
+<p>http://hackage.haskell.org/package/objective</p>
+<figure>
+<img src="E:/GitHub/fumieval.github.io/papers/ja/2015-Haskell-objects/Object-def.png" />
+</figure>
+</section>
+<section id="オブジェクト1" class="level2">
+<h2>オブジェクト(1)</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">(@~) ::</span> <span class="dt">Monad</span> m
+    <span class="ot">=&gt;</span> s <span class="co">-- 初期状態</span>
+    <span class="ot">-&gt;</span> (forall a<span class="fu">.</span> t a <span class="ot">-&gt;</span> <span class="dt">StateT</span> s m a) <span class="co">-- 命令の翻訳</span>
+    <span class="ot">-&gt;</span> <span class="dt">Object</span> t m <span class="co">-- オブジェクト</span></code></pre>
+</section>
+<section id="オブジェクト2" class="level2">
+<h2>オブジェクト(2)</h2>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">goblin ::</span> <span class="dt">Monad</span> m <span class="ot">=&gt;</span> <span class="dt">Object</span> <span class="dt">Action</span> m
+goblin <span class="fu">=</span> initialGoblin <span class="fu">@~</span> \<span class="kw">case</span>
+    <span class="dt">Render</span> <span class="ot">-&gt;</span> <span class="kw">do</span>
+        pos <span class="ot">&lt;-</span> use position
+        return <span class="fu">$</span> translate pos goblinPicture
+    <span class="dt">Jump</span> <span class="ot">-&gt;</span> velocity <span class="fu">+=</span> <span class="dt">V2</span> <span class="dv">0</span> (<span class="fu">-</span><span class="dv">1</span>)
+    <span class="dt">Move</span> x <span class="ot">-&gt;</span> velocity <span class="fu">+=</span> <span class="dt">V2</span> x <span class="dv">0</span>
+    <span class="dt">Attack</span> <span class="ot">-&gt;</span> hitPoint <span class="fu">-=</span> <span class="dv">1</span></code></pre>
+</section>
+<section id="使い方不死" class="level2">
+<h2>使い方(不死)</h2>
+<ul>
+<li><code>new</code>と送信演算子<code>(.-)</code>がある</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span> i <span class="ot">&lt;-</span> new goblin
+   i <span class="fu">.-</span> <span class="dt">Move</span> …
+   i <span class="fu">.-</span> <span class="dt">Jump</span></code></pre>
+</section>
+<section id="応用" class="level2">
+<h2>応用</h2>
+<ul>
+<li>Operationalモナド対応 <code>Object t m -&gt; Object (Program t) m</code></li>
+<li>操作を生み出すAIオブジェクトと先ほどのゴブリンオブジェクトを合成し、自律するゴブリンが作れる</li>
+<li>Object Auto (Program Action) -&gt; Object Action IO -&gt; Object Auto IO`</li>
+<li><p>定命のオブジェクト: 文脈をIOではなくEitherTなどにすると死ぬオブジェクトも作れる</p></li>
+<li><p>Minecraft風ゲームを作っています</p></li>
+</ul>
+</section>
+<section id="まとめ" class="level2">
+<h2>まとめ</h2>
+<p class="fragment" data-fragment-index="0">
+<ul>
+<li>Haskellは関数型言語</li>
+</ul>
+</p>
+<p class="fragment" data-fragment-index="1">
+<ul>
+<li>Haskellは手続き型言語</li>
+</ul>
+</p>
+<p class="fragment" data-fragment-index="2">
+<ul>
+<li>Haskellはオブジェクト指向言語</li>
+</ul>
+</p>
+<p class="fragment" data-fragment-index="3">
+<ul>
+<li>ご清聴ありがとうございました</li>
+</ul>
+</p>
+<p class="fragment" data-fragment-index="3">
+<ul>
+<li>Questions?</li>
+</ul>
+</p>
+</section>
+</div>
+
+<script src="/lib/js/head.min.js"></script>
+<script src="/js/reveal.js"></script>
+
+<script>
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: false,
+
+  // available themes are in /css/theme
+      theme: Reveal.getQueryHash().theme || 'beige',
+  
+  // default/cube/page/concave/zoom/linear/fade/none
+      transition: Reveal.getQueryHash().transition || 'linear',
+  
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+    { src: '/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    { src: '/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: '/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+  /*  { src: '/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }, */
+    { src: '/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+    { src: '/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+  ]
+  });
+
+</script>
+
+</body>
+</html>
