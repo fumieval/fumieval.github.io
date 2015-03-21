@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="stylesheet" href="/css/reveal.css">   <link rel="stylesheet" href="/css/theme/beige.css" id="theme">
+<link rel="stylesheet" href="/reveal.js/css/reveal.css">   <link rel="stylesheet" href="/reveal.js/css/theme/beige.css" id="theme">
 
   <style type="text/css">
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
@@ -47,7 +47,7 @@ img {border: none !important;}
 
 <!-- If the query includes 'print-pdf', use the PDF print sheet -->
 <script>
-  document.write( '<link rel="stylesheet" href="/css/print/' +
+  document.write( '<link rel="stylesheet" href="/reveal.js/css/print/' +
     ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) +
     '.css" type="text/css" media="print">' );
 </script>
@@ -218,8 +218,8 @@ goblin <span class="fu">=</span> initialGoblin <span class="fu">@~</span> \<span
 </section>
 </div>
 
-<script src="/lib/js/head.min.js"></script>
-<script src="/js/reveal.js"></script>
+<script src="/reveal.js/lib/js/head.min.js"></script>
+<script src="/reveal.js/js/reveal.js"></script>
 
 <script>
   // Full list of configuration options available here:
@@ -232,18 +232,18 @@ goblin <span class="fu">=</span> initialGoblin <span class="fu">@~</span> \<span
 
   // available themes are in /css/theme
       theme: Reveal.getQueryHash().theme || 'beige',
-  
+
   // default/cube/page/concave/zoom/linear/fade/none
       transition: Reveal.getQueryHash().transition || 'linear',
-  
+
   // Optional libraries used to extend on reveal.js
   dependencies: [
-    { src: '/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-    { src: '/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-    { src: '/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: '/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+    { src: '/reveal.js/plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+    { src: '/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
   /*  { src: '/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }, */
-    { src: '/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-    { src: '/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    { src: '/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+    { src: '/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
     // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
   ]
   });
