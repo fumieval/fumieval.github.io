@@ -78,16 +78,13 @@ img {border: none !important;}
 <li><span class="citation" data-cites="fumieval">@fumieval</span>, Fumiaki Kinoshita</li>
 <li>マイブーム: 俳句</li>
 </ul>
-<figure>
-<img src="C:/Users/Fumiaki/Pictures/Icon2.png" />
-</figure>
 </section>
 <section id="haskell流オブジェクト指向とは" class="level2">
 <h2>Haskell流オブジェクト指向とは</h2>
 <ul>
 <li>作用(IOやオレオレモナドなど)の圏における射である「オブジェクト」に基づいたパラダイム</li>
 <li>同じ作用間の射である自然変換と違い、内部状態を隠蔽できる</li>
-<li>ゲームのキャラクターの管理などに便利</li>
+<li>ゲームのキャラクターの表現などに便利</li>
 </ul>
 </section>
 <section id="オブジェクトを作るには" class="level2">
@@ -149,7 +146,7 @@ initialGoblin <span class="fu">=</span> <span class="dt">Position</span> (<span 
 <h2>インターフェイス</h2>
 <p>GADTで操作の型を並べる</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Action</span> x <span class="kw">where</span>
-    <span class="dt">Attack</span><span class="ot"> ::</span> <span class="dt">Action</span> <span class="dt">Attack</span>
+    <span class="dt">Attack</span><span class="ot"> ::</span> <span class="dt">Action</span> ()
     <span class="dt">Render</span><span class="ot"> ::</span> <span class="dt">Action</span> <span class="dt">Picture</span>
     <span class="dt">Jump</span><span class="ot"> ::</span> <span class="dt">Action</span> ()
     <span class="dt">Move</span><span class="ot"> ::</span> <span class="dt">Float</span> <span class="ot">-&gt;</span> <span class="dt">Action</span> <span class="dt">Bool</span></code></pre>
@@ -179,10 +176,10 @@ goblin <span class="fu">=</span> initialGoblin <span class="fu">@~</span> \<span
     <span class="dt">Move</span> x <span class="ot">-&gt;</span> velocity <span class="fu">+=</span> <span class="dt">V2</span> x <span class="dv">0</span>
     <span class="dt">Attack</span> <span class="ot">-&gt;</span> hitPoint <span class="fu">-=</span> <span class="dv">1</span></code></pre>
 </section>
-<section id="使い方不死" class="level2">
-<h2>使い方(不死)</h2>
+<section id="使い方" class="level2">
+<h2>使い方</h2>
 <ul>
-<li><code>new</code>と送信演算子<code>(.-)</code>がある</li>
+<li><code>new</code>と送信演算子<code>(.-)</code>でインスタンスを扱える</li>
 </ul>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">do</span> i <span class="ot">&lt;-</span> new goblin
    i <span class="fu">.-</span> <span class="dt">Move</span> …
@@ -191,11 +188,10 @@ goblin <span class="fu">=</span> initialGoblin <span class="fu">@~</span> \<span
 <section id="応用" class="level2">
 <h2>応用</h2>
 <ul>
-<li>Operationalモナド対応 <code>Object t m -&gt; Object (Program t) m</code></li>
-<li>操作を生み出すAIオブジェクトと先ほどのゴブリンオブジェクトを合成し、自律するゴブリンが作れる</li>
-<li>Object Auto (Program Action) -&gt; Object Action IO -&gt; Object Auto IO`</li>
-<li><p>定命のオブジェクト: 文脈をIOではなくEitherTなどにすると死ぬオブジェクトも作れる</p></li>
-<li><p>Minecraft風ゲームを作っています</p></li>
+<li>Operationalモナド対応: <code>Object t m -&gt; Object (Program t) m</code></li>
+<li>操作を生み出すAIオブジェクト<code>Object Auto (Program Action)</code>と先ほどのゴブリンオブジェクトを合成し、自律するゴブリンが作れる</li>
+<li>定命のオブジェクト: 文脈をIOではなくEitherTなどにすると死ぬオブジェクトも作れる</li>
+<li>Minecraft風ゲームを作っています</li>
 </ul>
 </section>
 <section id="まとめ" class="level2">

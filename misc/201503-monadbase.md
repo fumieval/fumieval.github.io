@@ -7,13 +7,11 @@
 * @fumieval, Fumiaki Kinoshita
 * マイブーム: 俳句
 
-![](Icon.png)
-
 Haskell流オブジェクト指向とは
 -----------
 * 作用(IOやオレオレモナドなど)の圏における射である「オブジェクト」に基づいたパラダイム
 * 同じ作用間の射である自然変換と違い、内部状態を隠蔽できる
-* ゲームのキャラクターの管理などに便利
+* ゲームのキャラクターの表現などに便利
 
 オブジェクトを作るには
 -----------
@@ -85,7 +83,7 @@ GADTで操作の型を並べる
 
 ```haskell
 data Action x where
-    Attack :: Action Attack
+    Attack :: Action ()
     Render :: Action Picture
     Jump :: Action ()
     Move :: Float -> Action Bool
@@ -122,10 +120,10 @@ goblin = initialGoblin @~ \case
     Attack -> hitPoint -= 1
 ```
 
-使い方(不死)
+使い方
 ------------
 
-* `new`と送信演算子`(.-)`がある
+* `new`と送信演算子`(.-)`でインスタンスを扱える
 
 ```haskell
 do i <- new goblin
@@ -135,11 +133,9 @@ do i <- new goblin
 
 応用
 ----------
-* Operationalモナド対応 `Object t m -> Object (Program t) m`
-* 操作を生み出すAIオブジェクトと先ほどのゴブリンオブジェクトを合成し、自律するゴブリンが作れる
-* Object Auto (Program Action) -> Object Action IO -> Object Auto IO`
+* Operationalモナド対応: `Object t m -> Object (Program t) m`
+* 操作を生み出すAIオブジェクト`Object Auto (Program Action)`と先ほどのゴブリンオブジェクトを合成し、自律するゴブリンが作れる
 * 定命のオブジェクト: 文脈をIOではなくEitherTなどにすると死ぬオブジェクトも作れる
-
 * Minecraft風ゲームを作っています
 
 まとめ
