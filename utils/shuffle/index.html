@@ -7,14 +7,14 @@
     <title>📋 Line Numbers for Textarea</title>
     <style>
       .editor {
-        display: inline-flex;
+        display: flex;
         gap: 10px;
         font-family: monospace;
         line-height: 21px;
         background: #282a3a;
         border-radius: 2px;
         padding: 20px 10px;
-        height: 200px;
+        height: 400px;
         overflow-y: auto;
       }
 
@@ -42,9 +42,20 @@
         border: 0;
         background: #282a3a;
         color: #FFF;
-        min-width: 500px;
+        width: 100%;
         outline: none;
         resize: none;
+      }
+
+      button {
+        background-color: #366736;
+        color: white;
+        border-radius: 6px;
+        font-size: 16px;
+        width: 100%;
+        padding: 8px;
+        text-align: center;
+        margin-top: 4px;
       }
     </style>
   </head>
@@ -54,8 +65,8 @@
         <span></span>
       </div>
       <textarea id="textarea"></textarea>
-      <button id="submit-shuffle">シャッフルする</button>
     </div>
+    <button id="submit-shuffle">シャッフルする</button>
 
     <script>
       const textarea = document.querySelector('textarea');
