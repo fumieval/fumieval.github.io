@@ -1,0 +1,136 @@
+<html>
+  <head>
+    <title>Recorder Fingering Visualisation</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="main.js"></script>
+    <meta charset="utf-8">
+  </head>
+  <style>
+    .frame {
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      width: 100px;
+    }
+    input[type="text"] {
+      width: 100%;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: none;
+      background-color: #eee;
+      padding: 4px;
+    }
+    .instrument {
+      background-image: url("recorder.png");
+      width: 90px;
+      height: 500px;
+      position: relative;
+      user-select: none;
+      margin: 0 auto;
+    }
+    .hole {
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      left: 26px;
+      text-align: center;
+      line-height: 32px;
+      font-size: 24px;
+      color: #ddd;
+      border: 2px solid #333;
+      font-family: serif;
+    }
+    .open {
+      background-color: transparent;
+      border-radius: 50%;
+    }
+    .leaking.hole-0 {
+      background: linear-gradient(180deg, transparent 6px, #000 0px, #333);
+    }
+    .leaking.hole-1, .leaking.hole-2, .leaking.hole-3{
+      background: linear-gradient(90deg, transparent 6px, #000 0px, #333);
+    }
+    .leaking.hole-4, .leaking.hole-5, .leaking.hole-6, .leaking.hole-7 {
+      background: linear-gradient(270deg, transparent 6px, #000 0px, #333);
+    }
+    .closed {
+      background-color: #333;
+    }
+    .hole-0 {
+      top: 10px;
+      border-style: dotted;
+    }
+    .hole-1 {
+      top: 50px;
+    }
+    .hole-2 {
+      top: 100px;
+    }
+    .hole-3 {
+      top: 150px;
+    }
+    .hole-4 {
+      top: 200px;
+    }
+    .hole-5 {
+      top: 250px;
+    }
+    .hole-6 {
+      top: 300px;
+    }
+    .hole-7 {
+      top: 365px;
+    }
+    #app {
+      display: flex;
+    }
+    button {
+      height: 30px;
+      width: 100px;
+      margin: auto 0;
+      background-color: #ddd;
+      border: none;
+      border-radius: 15px;
+    }
+    .control {
+      text-align: center;
+    }
+  </style>
+  <body>
+    <div id="app">
+      <div v-for="(recorder, i) in recorders" :key="recorder.id">
+        <Recorder :fingering="recorder.fingering"></Recorder>
+        <div class="control">          
+          <button @click="recorders.splice(i, 1)">
+            Remove
+          </button>
+        </div>
+      </div>
+      <button @click="push()">
+        Add
+      </button>
+    </div>
+    <script>
+      const { createApp, ref } = Vue
+      function generateId() {
+        return Math.random().toString(36).slice(-8);
+      }
+      createApp({
+        setup() {
+          const recorders = ref([]);
+          function push(){
+            recorders.value.push({ id: generateId(), fingering: '' });
+          }
+          push();
+          return {
+            recorders,
+            push
+          }
+        }
+      })
+      .component('recorder', Recorder)
+      .mount('#app')
+    </script>
+  </body>
+</html>
