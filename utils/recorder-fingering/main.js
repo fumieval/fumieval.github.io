@@ -5,7 +5,7 @@ function leaking(index){
 }
 
 var Recorder = {
-  props: ['fingering'],
+  props: ['fingering', 'displayUi'],
   setup(props) {
     const numbers = ref(props.fingering);
     function insert(i){
@@ -33,6 +33,7 @@ var Recorder = {
     }
     return {
       numbers,
+      displayUi: props.displayUi,
       toggle,
       leaking
     }
@@ -40,7 +41,7 @@ var Recorder = {
   /*html*/
   template: `
 <div class="frame">
-  <input type="text" v-model="numbers" placeholder="-">
+  <input type="text" v-model="numbers" placeholder="-" v-if="displayUi">
   <div class="instrument">
     <span v-for="(_, i) in 8"
       :key="i" class="hole"

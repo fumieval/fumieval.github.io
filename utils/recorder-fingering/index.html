@@ -83,39 +83,51 @@
     .hole-7 {
       top: 365px;
     }
-    #app {
-      display: flex;
-    }
     button {
       height: 30px;
-      width: 100px;
       margin: auto 0;
       background-color: #ddd;
       border: none;
       border-radius: 15px;
+      padding: 8px 16px;
+      line-height: 14px;
     }
     .control {
       text-align: center;
     }
+    article {
+      margin-top: 32px;
+    }
+    @media (min-width: 600px) {
+      #app {
+        margin-left: 300px;
+      }
+    }
   </style>
   <body>
     <div id="app">
-      <div v-for="(recorder, i) in recorders" :key="recorder.id">
-        <Recorder :fingering="recorder.fingering"></Recorder>
-        <div class="control">          
-          <button @click="recorders.splice(i, 1)">
-            Remove
-          </button>
-        </div>
+      <div style="display: flex;">
+        <div v-for="(recorder, i) in recorders" :key="recorder.id">
+          <Recorder :fingering="recorder.fingering" :displayUi="displayUi"></Recorder>
+          <div class="control">          
+            <button @click="recorders.splice(i, 1)" v-if="displayUi">
+              Remove
+            </button>
+          </div>
+        </div>        
+        <button @click="push()" v-if="displayUi">
+          Add
+        </button>
       </div>
-      <button @click="push()">
-        Add
-      </button>
+      <article>
+        <h3>使い方</h3>
+        トーンホールをクリックすると、閉→開→半開の状態が切り替わります。
+        <button @click="displayUi = !displayUi">
+          {{displayUi ? 'ボタンを隠す' : 'ボタンを表示'}}
+        </button>
+      </article>
     </div>
-    <article>
-      <h3>使い方</h3>
-      トーンホールをクリックすると、閉→開→半開の状態が切り替わります。
-    </article>
+
     <script>
       const { createApp, ref } = Vue
       function generateId() {
@@ -124,13 +136,15 @@
       createApp({
         setup() {
           const recorders = ref([]);
+          const displayUi = ref(true);
           function push(){
             recorders.value.push({ id: generateId(), fingering: '' });
           }
           push();
           return {
             recorders,
-            push
+            push,
+            displayUi
           }
         }
       })
