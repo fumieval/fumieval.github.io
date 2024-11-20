@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>Binomial Confidence Interval</title>
+  </head>
+  <style>
+    main {
+      margin-left: auto;
+      margin-right: auto;
+      width: 800px;
+    }
+  </style>
+  <body>
+    <main>
+    <h1>Binomial Confidence Interval Calculator</h1>
+    <p>
+      Given the number of successes and trials, we can obtain a confidence interval of the true success rate using the Wilson score interval.
+      The textbook method of calculating confidence intervals -- known as Wald interval --
+      is known to be inaccurate especially when the success rate is close to 0 or 1 or the number of trials is small, massively underperforming the nominal coverage rate.
+      The Wilson score interval is a more robust method that provides confidence intervals with better coverage.
+    </p>
+    <p>
+      <label for="z-score">Z-score</label>
+      <input type="text" id="z-score" value="1.96">
+    </p>
+    <textarea id="input" rows="10" cols="50" placeholder="success0,trials0
+success1,trial1
+success2,trial2
+..."></textarea>
+    <pre id="result"></pre>
+    </main>
+    <script>
+      function wilsonScoreInterval(success, n, z) {
+        const ph = success / n;
+        const z2 = z * z;
+        const term = z / (2 * n) * Math.sqrt(4 * n * ph * (1 - ph) + z2);
+        const factor = 1 / (1 + z2 / n);
+        const offset = z2 / (2 * n);
+        return [factor * (ph + offset - term), factor * (ph + offset + term)];
+      }
+
+      const textarea = document.querySelector("#input");
+      textarea.addEventListener("input", () => {
+        const rows = textarea.value.split("\n");
+        let result = [];
+        const zScore = parseFloat(document.querySelector("#z-score").value);
+        for (const row of rows) {
+          let input = [];
+          let rest = [];
+          for(const value of row.split(",").map((v) => v.trim())){
+            if (/^\d+$/.test(value)) {
+              input.push(parseInt(value));
+            } else {
+              rest.push(value);
+            }
+          }
+          const [lower,upper] = wilsonScoreInterval(input[0], input[1], zScore);
+          result.push(`${rest.join(",")},${(100 * lower).toFixed(2)}%,${(100 * upper).toFixed(2)}%`);
+        }
+        document.querySelector("#result").textContent = result.join("\n");
+      });
+    </script>
+  </body>
+</html>
